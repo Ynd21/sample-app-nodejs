@@ -5,7 +5,7 @@ export * from './error';
 export * from './order';
 
 export interface CouponTableItem {
-    id: number;
+    id: string | number;
     name: string;
     redemption_type: string;
     current_uses: number;

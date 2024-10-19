@@ -1,5 +1,5 @@
-import { Box, Button, Checkbox, Flex, Panel, Link as StyledLink, Table, TableSortDirection, Text } from '@bigcommerce/big-design';
-import { AddIcon, DeleteIcon, GetAppIcon } from '@bigcommerce/big-design-icons';
+import { Box, Button, Checkbox, Flex, Input, Panel, Link as StyledLink, Switch, Table, TableSortDirection, Text } from '@bigcommerce/big-design';
+import { AddIcon, DeleteIcon, GetAppIcon, SearchIcon } from '@bigcommerce/big-design-icons';
 import Link from 'next/link';
 import { useState } from 'react';
 import ErrorMessage from '../../components/error';
@@ -12,6 +12,7 @@ const Promotions = () => {
     const [columnHash, setColumnHash] = useState('');
     const [direction, setDirection] = useState<TableSortDirection>('ASC');
     const [selectedPromotions, setSelectedPromotions] = useState<string[]>([]);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const { error, isLoading, list = [], meta = {}, mutateList } = usePromotionList({
         page: String(currentPage),
@@ -60,7 +61,30 @@ const Promotions = () => {
         <Text>{`${current} / ${max === null ? '∞' : max}`}</Text>
     );
     const renderDate = (date: string) => <Text>{new Date(date).toLocaleDateString()}</Text>;
-    const renderStatus = (status: string) => <Text>{status}</Text>;
+    const renderStatus = (status: string, id: string | number) => (
+        <Switch
+            checked={status === 'ENABLED'}
+            onChange={() => handleStatusChange(id, status)}
+        />
+    );
+
+    const handleStatusChange = async (id: string | number, currentStatus: string) => {
+        try {
+            await fetch(`/api/coupons/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: currentStatus === 'ENABLED' ? 'DISABLED' : 'ENABLED' })
+            });
+            mutateList();
+        } catch (error) {
+            console.error('Error updating promotion status:', error);
+            alert('Error updating promotion status. Please try again.');
+        }
+    };
+
+    const filteredList = list.filter(item => 
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     if (isLoading) return <Loading />;
     if (error) return <ErrorMessage error={error} />;
@@ -89,6 +113,14 @@ const Promotions = () => {
                     </Button>
                 </Box>
             </Flex>
+            <Flex marginBottom="medium">
+                <Input
+                    iconLeft={<SearchIcon />}
+                    placeholder="Search promotions"
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                />
+            </Flex>
             <Table
                 columns={[
                     { 
@@ -107,9 +139,9 @@ const Promotions = () => {
                     { header: 'Uses', hash: 'uses', render: ({ current_uses, max_uses }) => renderUses(current_uses, max_uses), isSortable: true },
                     { header: 'Start Date', hash: 'start_date', render: ({ start_date }) => renderDate(start_date), isSortable: true },
                     { header: 'End Date', hash: 'end_date', render: ({ end_date }) => renderDate(end_date || 'No end date'), isSortable: true },
-                    { header: 'Status', hash: 'status', render: ({ status }) => renderStatus(status), isSortable: true },
+                    { header: 'Status', hash: 'status', render: ({ status, id }) => renderStatus(status, id), isSortable: true },
                 ]}
-                items={list}
+                items={filteredList}
                 itemName="Promotions"
                 pagination={{
                     currentPage,
