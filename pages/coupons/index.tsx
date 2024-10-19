@@ -4,17 +4,16 @@ import Link from 'next/link';
 import { useState } from 'react';
 import ErrorMessage from '../../components/error';
 import Loading from '../../components/loading';
-import { useCouponList } from '../../lib/hooks';
-import { CouponTableItem } from '../../types';
+import { usePromotionList } from '../../lib/hooks';
 
-const Coupons = () => {
+const Promotions = () => {
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [columnHash, setColumnHash] = useState('');
     const [direction, setDirection] = useState<TableSortDirection>('ASC');
-    const [selectedCoupons, setSelectedCoupons] = useState<string[]>([]);
+    const [selectedPromotions, setSelectedPromotions] = useState<string[]>([]);
 
-    const { error, isLoading, list = [], meta = {}, mutateList } = useCouponList({
+    const { error, isLoading, list = [], meta = {}, mutateList } = usePromotionList({
         page: String(currentPage),
         limit: String(itemsPerPage),
         ...(columnHash && { sort: columnHash }),
@@ -22,13 +21,6 @@ const Coupons = () => {
     });
 
     const itemsPerPageOptions = [10, 20, 50, 100];
-    const tableItems: CouponTableItem[] = list.map(({ id, code, amount, type, date_created }) => ({
-        id,
-        code,
-        amount,
-        type,
-        date_created,
-    }));
 
     const onItemsPerPageChange = (newRange: number) => {
         setCurrentPage(1);
@@ -41,23 +33,23 @@ const Coupons = () => {
     };
 
     const handleCheckboxChange = (id: string) => {
-        setSelectedCoupons(prev => 
-            prev.includes(id) ? prev.filter(couponId => couponId !== id) : [...prev, id]
+        setSelectedPromotions(prev => 
+            prev.includes(id) ? prev.filter(promotionId => promotionId !== id) : [...prev, id]
         );
     };
 
     const handleDeleteSelected = async () => {
-        if (window.confirm('Are you sure you want to delete the selected coupons?')) {
+        if (window.confirm('Are you sure you want to delete the selected promotions?')) {
             try {
-                for (const id of selectedCoupons) {
+                for (const id of selectedPromotions) {
                     await fetch(`/api/coupons/${id}`, { method: 'DELETE' });
                 }
                 mutateList();
-                setSelectedCoupons([]);
-                alert('Selected coupons deleted successfully!');
+                setSelectedPromotions([]);
+                alert('Selected promotions deleted successfully!');
             } catch (error) {
-                console.error('Error deleting coupons:', error);
-                alert('Error deleting coupons. Please try again.');
+                console.error('Error deleting promotions:', error);
+                alert('Error deleting promotions. Please try again.');
             }
         }
     };
@@ -74,7 +66,7 @@ const Coupons = () => {
     if (error) return <ErrorMessage error={error} />;
 
     return (
-        <Panel header="Coupons">
+        <Panel header="Promotions">
             <Flex justifyContent="space-between" marginBottom="medium">
                 <Box>
                     <Link href="/">
@@ -83,15 +75,15 @@ const Coupons = () => {
                 </Box>
                 <Box>
                     <Button iconLeft={<GetAppIcon />} variant="secondary" marginRight="small">
-                        Export Coupons
+                        Export Promotions
                     </Button>
                     <Button iconLeft={<AddIcon />} variant="secondary" marginRight="small">
-                        Generate Coupons
+                        Create Promotion
                     </Button>
                     <Button 
                         iconLeft={<DeleteIcon />} 
                         onClick={handleDeleteSelected}
-                        disabled={selectedCoupons.length === 0}
+                        disabled={selectedPromotions.length === 0}
                     >
                         Delete Selected
                     </Button>
@@ -105,7 +97,7 @@ const Coupons = () => {
                         render: ({ id }) => (
                             <Checkbox
                                 label=""
-                                checked={selectedCoupons.includes(id.toString())}
+                                checked={selectedPromotions.includes(id.toString())}
                                 onChange={() => handleCheckboxChange(id.toString())}
                             />
                         ),
@@ -117,8 +109,8 @@ const Coupons = () => {
                     { header: 'End Date', hash: 'end_date', render: ({ end_date }) => renderDate(end_date || 'No end date'), isSortable: true },
                     { header: 'Status', hash: 'status', render: ({ status }) => renderStatus(status), isSortable: true },
                 ]}
-                items={tableItems}
-                itemName="Coupons"
+                items={list}
+                itemName="Promotions"
                 pagination={{
                     currentPage,
                     totalItems: meta?.pagination?.total || list.length,
@@ -138,4 +130,4 @@ const Coupons = () => {
     );
 };
 
-export default Coupons;
+export default Promotions;

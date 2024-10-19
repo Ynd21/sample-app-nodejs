@@ -1,26 +1,29 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { bigcommerceClient, getSession } from '../../../lib/auth';
 
-export default async function coupons(req: NextApiRequest, res: NextApiResponse) {
+export default async function promotions(req: NextApiRequest, res: NextApiResponse) {
     const { method } = req;
 
     if (method === 'GET') {
         try {
             const { accessToken, storeHash } = await getSession(req);
-            const bigcommerce = bigcommerceClient(accessToken, storeHash, 'v2');
+            const bigcommerce = bigcommerceClient(accessToken, storeHash, 'v3');
 
-            const response = await bigcommerce.get('/coupons');
+            const response = await bigcommerce.get('/promotions');
 
-            const formattedCoupons = response.data.map(coupon => ({
-                id: coupon.id,
-                code: coupon.code,
-                amount: coupon.amount,
-                type: coupon.type,
-                date_created: coupon.date_created
+            const formattedPromotions = response.data.map(promotion => ({
+                id: promotion.id,
+                name: promotion.name,
+                redemption_type: promotion.redemption_type,
+                current_uses: promotion.current_uses,
+                max_uses: promotion.max_uses,
+                start_date: promotion.start_date,
+                end_date: promotion.end_date,
+                status: promotion.status
             }));
 
             res.status(200).json({
-                data: formattedCoupons,
+                data: formattedPromotions,
                 meta: response.meta
             });
         } catch (error) {

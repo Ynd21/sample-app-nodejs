@@ -32,21 +32,12 @@ export function useProducts() {
     };
 }
 
-export function useCouponList(options = {}) {
+export function usePromotionList(options = {}) {
     const { context } = useSession();
     const params = new URLSearchParams({ ...options, context }).toString();
     const { data, error, mutate } = useSWR(context ? ['/api/coupons', params] : null, fetcher);
 
-    const formattedList = data?.data.map((coupon: any) => ({
-        id: coupon.id,
-        name: coupon.name,
-        redemption_type: coupon.redemption_type,
-        current_uses: coupon.current_uses,
-        max_uses: coupon.max_uses,
-        start_date: coupon.start_date,
-        end_date: coupon.end_date,
-        status: coupon.status
-    })) || [];
+    const formattedList = data?.data || [];
 
     return {
         list: formattedList,
