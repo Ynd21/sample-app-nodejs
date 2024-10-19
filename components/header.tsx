@@ -7,12 +7,14 @@ export const TabIds = {
     HOME: 'home',
     PRODUCTS: 'products',
     COUPONS: 'coupons',
+    PRICE_LISTS: 'price_lists',
 };
 
 export const TabRoutes = {
     [TabIds.HOME]: '/',
     [TabIds.PRODUCTS]: '/products',
     [TabIds.COUPONS]: '/coupons',
+    [TabIds.PRICE_LISTS]: '/price-lists',
 };
 
 const HeaderlessRoutes = [
@@ -64,6 +66,7 @@ const Header = () => {
         { id: TabIds.HOME, title: 'Home' },
         { id: TabIds.PRODUCTS, title: 'Products' },
         { id: TabIds.COUPONS, title: 'Coupons' },
+        { id: TabIds.PRICE_LISTS, title: 'Price Lists' },
     ];
 
     const handleTabClick = (tabId: string) => {
