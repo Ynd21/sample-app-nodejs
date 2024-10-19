@@ -37,7 +37,7 @@ export function useCouponList() {
     const { data, error, mutate } = useSWR(context ? ['/api/coupons', params] : null, fetcher);
 
     return {
-        list: data ?? [],
+        list: Array.isArray(data) ? data : [],
         isLoading: !data && !error,
         error,
         mutateList: mutate,

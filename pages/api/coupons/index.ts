@@ -6,10 +6,15 @@ export default async function coupons(req: NextApiRequest, res: NextApiResponse)
         const { accessToken, storeHash } = await getSession(req);
         const bigcommerce = bigcommerceClient(accessToken, storeHash, 'v2');
 
-        const { data } = await bigcommerce.get('/coupons');
-        res.status(200).json(data);
+        const response = await bigcommerce.get('/coupons');
+        
+        if (!response || !response.data) {
+            throw new Error('Invalid response from BigCommerce API');
+        }
+
+        res.status(200).json(response.data);
     } catch (error) {
-        const { message, response } = error;
-        res.status(response?.status || 500).json({ message });
+        console.error('Error fetching coupons:', error);
+        res.status(500).json({ message: 'An error occurred while fetching coupons' });
     }
 }
