@@ -7,9 +7,10 @@ async function fetcher(url: string, query: string) {
 
     // If the status code is not in the range 200-299, throw an error
     if (!res.ok) {
-        const { message } = await res.json();
-        const error: ErrorProps = new Error(message || 'An error occurred while fetching the data.');
-        error.status = res.status; // e.g. 500
+        const errorData = await res.json();
+        console.error('Error response from API:', errorData);
+        const error: ErrorProps = new Error(errorData.message || 'An error occurred while fetching the data.');
+        error.status = res.status;
         throw error;
     }
 
