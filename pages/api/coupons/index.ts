@@ -6,7 +6,7 @@ export default async function coupons(req: NextApiRequest, res: NextApiResponse)
         const { accessToken, storeHash } = await getSession(req);
         const bigcommerce = bigcommerceClient(accessToken, storeHash, 'v2');
 
-        const response = await bigcommerce.get('/v2/coupons');
+        const response = await bigcommerce.get('/coupons');
 
         if (!response || !response.data) {
             throw new Error('Invalid response from BigCommerce API');
