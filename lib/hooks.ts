@@ -118,11 +118,11 @@ export const useShippingAndProductsInfo = (orderId: number) => {
 
 export function usePriceLists(options = {}) {
     const { data, error } = useSWR(['/api/price-lists', options], fetcher);
-
+  
     return {
-        priceLists: data?.data || [],
-        meta: data?.meta,
-        isLoading: !error && !data,
-        error,
+      priceLists: data?.data || [],
+      meta: data?.meta,
+      isLoading: !error && !data,
+      error,
     };
-}
+  }

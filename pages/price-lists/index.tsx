@@ -19,6 +19,12 @@ const PriceLists = () => {
         ...(columnHash && { direction: direction.toLowerCase() }),
     });
 
+    if (isLoading) return <Loading />;
+    if (error) {
+        console.error('Error loading price lists:', error);
+        return <ErrorMessage error={error} />;
+    }
+
     const handleCreatePriceList = () => {
         // Implement create price list functionality
     };
@@ -26,20 +32,20 @@ const PriceLists = () => {
     const handleExportPriceLists = async () => {
         try {
             const response = await fetch('/api/price-lists/export');
-            if (!response.ok) throw new Error('Failed to export price lists');
+            if (!response.ok) throw new Error('Failed to export price list records');
     
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.style.display = 'none';
             a.href = url;
-            a.download = 'price_lists.csv';
+            a.download = 'price_list_records.csv';
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.error('Error exporting price lists:', error);
-            alert('Failed to export price lists. Please try again.');
+            console.error('Error exporting price list records:', error);
+            alert('Failed to export price list records. Please try again.');
         }
     };
 
@@ -50,9 +56,6 @@ const PriceLists = () => {
     const handleDeleteSelected = () => {
         // Implement delete selected price lists functionality
     };
-
-    if (isLoading) return <Loading />;
-    if (error) return <ErrorMessage error={error} />;
 
     return (
         <Panel header="Price Lists">

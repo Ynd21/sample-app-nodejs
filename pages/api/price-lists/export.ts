@@ -12,25 +12,42 @@ export default async function exportPriceLists(req: NextApiRequest, res: NextApi
         const { accessToken, storeHash } = await getSession(req);
         const bigcommerce = bigcommerceClient(accessToken, storeHash, 'v3');
 
-        const response = await bigcommerce.get('/pricelists');
-        const priceLists = response.data.data;
+        // First, get all price lists
+        const priceListsResponse = await bigcommerce.get('/pricelists');
+        const priceLists = priceListsResponse.data.data;
 
-        // Convert price lists to CSV
+        let allRecords = [];
+
+        // For each price list, fetch its records
+        for (const priceList of priceLists) {
+            const recordsResponse = await bigcommerce.get(`/pricelists/${priceList.id}/records`);
+            const records = recordsResponse.data.data;
+            allRecords = allRecords.concat(records.map(record => ({
+                ...record,
+                price_list_name: priceList.name
+            })));
+        }
+
+        // Convert price list records to CSV
         const csvContent = [
-            ['ID', 'Name', 'Active', 'Date Created', 'Date Modified'],
-            ...priceLists.map(list => [
-                list.id,
-                list.name,
-                list.active ? 'Yes' : 'No',
-                new Date(list.date_created).toLocaleDateString(),
-                new Date(list.date_modified).toLocaleDateString()
+            ['Price List Name', 'Currency', 'Product ID', 'Variant ID', 'Price', 'Sale Price', 'Retail Price', 'MAP Price'],
+            ...allRecords.map(record => [
+                record.price_list_name,
+                record.currency,
+                record.product_id,
+                record.variant_id,
+                record.price,
+                record.sale_price,
+                record.retail_price,
+                record.map_price
             ])
         ].map(row => row.join(',')).join('\n');
 
         res.setHeader('Content-Type', 'text/csv');
-        res.setHeader('Content-Disposition', 'attachment; filename=price_lists.csv');
+        res.setHeader('Content-Disposition', 'attachment; filename=price_list_records.csv');
         res.status(200).send(csvContent);
     } catch (error) {
+        console.error('Error exporting price list records:', error);
         res.status(error.status || 500).json({ message: error.message });
     }
 }
