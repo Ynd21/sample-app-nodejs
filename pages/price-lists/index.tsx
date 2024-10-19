@@ -12,7 +12,7 @@ const PriceLists = () => {
     const [columnHash, setColumnHash] = useState('');
     const [direction, setDirection] = useState<TableSortDirection>('ASC');
 
-    const { error, isLoading, priceLists } = usePriceLists({
+    const { error, isLoading, priceLists, meta } = usePriceLists({
         page: String(currentPage),
         limit: String(itemsPerPage),
         ...(columnHash && { sort: columnHash }),
@@ -77,7 +77,7 @@ const PriceLists = () => {
                 itemName="Price Lists"
                 pagination={{
                     currentPage,
-                    totalItems: priceLists.length,
+                    totalItems: meta?.pagination?.total || 0,
                     onPageChange: setCurrentPage,
                     itemsPerPageOptions: [10, 20, 50, 100],
                     onItemsPerPageChange: setItemsPerPage,
