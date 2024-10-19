@@ -22,6 +22,7 @@ const PriceLists = () => {
     if (isLoading) return <Loading />;
     if (error) {
         console.error('Error loading price lists:', error);
+
         return <ErrorMessage error={error} />;
     }
 
