@@ -32,15 +32,16 @@ export function useProducts() {
     };
 }
 
-export function useCouponList() {
+export function useCouponList(options = {}) {
     const { context } = useSession();
-    const params = new URLSearchParams({ context }).toString();
+    const params = new URLSearchParams({ ...options, context }).toString();
     const { data, error, mutate } = useSWR(context ? ['/api/coupons', params] : null, fetcher);
 
     return {
-        list: Array.isArray(data) ? data : [],
-        isLoading: !data && !error,
+        list: data?.data ?? [],
+        meta: data?.meta,
         error,
+        isLoading: !data && !error,
         mutateList: mutate,
     };
 }

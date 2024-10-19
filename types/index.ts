@@ -11,3 +11,8 @@ export interface CouponTableItem {
     type: string;
     date_created: string;
 }
+
+export enum PromotionRedemptionType {
+    coupon = 'coupon',
+    automatic = 'automatic'
+}
