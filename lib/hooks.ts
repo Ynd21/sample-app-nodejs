@@ -117,14 +117,12 @@ export const useShippingAndProductsInfo = (orderId: number) => {
 }
 
 export function usePriceLists(options = {}) {
-    const { context } = useSession();
-    const params = new URLSearchParams({ ...options, context }).toString();
-    const { data, error, mutate } = useSWR(context ? ['/api/price-lists', params] : null, fetcher);
+    const { data, error } = useSWR(['/api/price-lists', options], fetcher);
 
     return {
         priceLists: data?.data || [],
+        meta: data?.meta,
+        isLoading: !error && !data,
         error,
-        isLoading: !data && !error,
-        mutatePriceLists: mutate,
     };
 }

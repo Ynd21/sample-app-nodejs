@@ -23,8 +23,24 @@ const PriceLists = () => {
         // Implement create price list functionality
     };
 
-    const handleExportPriceLists = () => {
-        // Implement export price lists functionality
+    const handleExportPriceLists = async () => {
+        try {
+            const response = await fetch('/api/price-lists/export');
+            if (!response.ok) throw new Error('Failed to export price lists');
+    
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'price_lists.csv';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error exporting price lists:', error);
+            alert('Failed to export price lists. Please try again.');
+        }
     };
 
     const handleImportPriceLists = () => {
