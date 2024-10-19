@@ -11,12 +11,7 @@ const Coupons = () => {
     const [columnHash, setColumnHash] = useState('');
     const [direction, setDirection] = useState<TableSortDirection>('ASC');
     const [selectedCoupons, setSelectedCoupons] = useState<string[]>([]);
-    const { error, isLoading, list = [], meta = {}, mutateList } = useCouponList({
-        page: String(currentPage),
-        limit: String(itemsPerPage),
-        ...(columnHash && { sort: columnHash }),
-        ...(columnHash && { direction: direction.toLowerCase() }),
-    });
+    const { error, isLoading, list = [], mutateList } = useCouponList();
 
     const itemsPerPageOptions = [10, 20, 50, 100];
     const tableItems: CouponTableItem[] = list.map(({ id, code, current_uses, max_uses, date_created }) => ({

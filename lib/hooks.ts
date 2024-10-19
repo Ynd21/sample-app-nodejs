@@ -31,19 +31,18 @@ export function useProducts() {
     };
 }
 
-export const useCouponList = (options = {}) => {
+export function useCouponList() {
     const { context } = useSession();
-    const params = new URLSearchParams(options).toString();
-    const { data, error, mutate } = useSWR(`/api/coupons?${params}&context=${context}`, fetcher);
+    const params = new URLSearchParams({ context }).toString();
+    const { data, error, mutate } = useSWR(context ? ['/api/coupons', params] : null, fetcher);
 
     return {
-        list: data?.data ?? [],
-        meta: data?.meta,
-        error,
+        list: data ?? [],
         isLoading: !data && !error,
+        error,
         mutateList: mutate,
     };
-};
+}
 
 export function useProductList(query?: QueryParams) {
     const { context } = useSession();
