@@ -35,6 +35,7 @@ export const useCouponList = (options = {}) => {
     const { context } = useSession();
     const params = new URLSearchParams(options).toString();
     const { data, error, mutate } = useSWR(`/api/coupons?${params}&context=${context}`, fetcher);
+
     return {
         list: data?.data ?? [],
         meta: data?.meta,

@@ -12,7 +12,6 @@ const Coupons = () => {
     const [columnHash, setColumnHash] = useState('');
     const [direction, setDirection] = useState<TableSortDirection>('ASC');
     const [selectedCoupons, setSelectedCoupons] = useState<string[]>([]);
-    const router = useRouter();
     const { error, isLoading, list = [], meta = {}, mutateList } = useCouponList({
         page: String(currentPage),
         limit: String(itemsPerPage),
@@ -76,6 +75,7 @@ const Coupons = () => {
                         hash: 'select',
                         render: ({ id }) => (
                             <Checkbox
+                                label=""
                                 checked={selectedCoupons.includes(id)}
                                 onChange={() => handleCheckboxChange(id)}
                             />
