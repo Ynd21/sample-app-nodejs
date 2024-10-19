@@ -1,5 +1,4 @@
 import { Button, Checkbox, Panel, Table, TableSortDirection } from '@bigcommerce/big-design';
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import ErrorMessage from '../../components/error';
 import Loading from '../../components/loading';
