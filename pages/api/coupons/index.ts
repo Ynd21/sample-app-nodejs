@@ -9,7 +9,7 @@ export default async function coupons(req: NextApiRequest, res: NextApiResponse)
             const { accessToken, storeHash } = await getSession(req);
             const bigcommerce = bigcommerceClient(accessToken, storeHash, 'v2');
 
-            const response = await bigcommerce.get('/v2/coupons');
+            const response = await bigcommerce.get('/coupons');
 
             const formattedCoupons = response.data.map(coupon => ({
                 id: coupon.id,
