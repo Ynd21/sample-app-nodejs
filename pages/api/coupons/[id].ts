@@ -11,9 +11,9 @@ export default async function coupon(req: NextApiRequest, res: NextApiResponse) 
         case 'DELETE':
             try {
                 const { accessToken, storeHash } = await getSession(req);
-                const bigcommerce = bigcommerceClient(accessToken, storeHash);
+                const bigcommerce = bigcommerceClient(accessToken, storeHash, 'v2');
 
-                await bigcommerce.delete(`/coupons/${id}`);
+                await bigcommerce.delete(`/v2/coupons/${id}`);
                 res.status(204).end();
             } catch (error) {
                 const { message, response } = error;
