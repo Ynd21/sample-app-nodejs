@@ -7,7 +7,7 @@ export * from './order';
 export interface CouponTableItem {
     id: string;
     code: string;
-    current_uses: number;
-    max_uses: number;
+    amount: number;
+    type: string;
     date_created: string;
 }

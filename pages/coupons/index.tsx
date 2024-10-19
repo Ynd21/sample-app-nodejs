@@ -11,18 +11,19 @@ const Coupons = () => {
     const [columnHash, setColumnHash] = useState('');
     const [direction, setDirection] = useState<TableSortDirection>('ASC');
     const [selectedCoupons, setSelectedCoupons] = useState<string[]>([]);
+
     const { error, isLoading, list = [], mutateList } = useCouponList();
 
     const itemsPerPageOptions = [10, 20, 50, 100];
-    const tableItems: CouponTableItem[] = list.map(({ id, code, current_uses, max_uses, date_created }) => ({
+    const tableItems: CouponTableItem[] = list.map(({ id, code, amount, type, date_created }) => ({
         id,
         code,
-        current_uses,
-        max_uses,
+        amount,
+        type,
         date_created,
     }));
 
-    const onItemsPerPageChange = (newRange) => {
+    const onItemsPerPageChange = (newRange: number) => {
         setCurrentPage(1);
         setItemsPerPage(newRange);
     };
@@ -76,15 +77,15 @@ const Coupons = () => {
                         ),
                     },
                     { header: 'Code', hash: 'code', render: ({ code }) => code, isSortable: true },
-                    { header: 'Current Uses', hash: 'current_uses', render: ({ current_uses }) => current_uses, isSortable: true },
-                    { header: 'Max Uses', hash: 'max_uses', render: ({ max_uses }) => max_uses, isSortable: true },
+                    { header: 'Amount', hash: 'amount', render: ({ amount }) => amount, isSortable: true },
+                    { header: 'Type', hash: 'type', render: ({ type }) => type, isSortable: true },
                     { header: 'Created Date', hash: 'date_created', render: ({ date_created }) => new Date(date_created).toLocaleDateString(), isSortable: true },
                 ]}
                 items={tableItems}
                 itemName="Coupons"
                 pagination={{
                     currentPage,
-                    totalItems: meta?.pagination?.total,
+                    totalItems: list.length,
                     onPageChange: setCurrentPage,
                     itemsPerPageOptions,
                     onItemsPerPageChange,
