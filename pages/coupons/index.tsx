@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Flex, Panel, Small, Link as StyledLink, Table, TableSortDirection, Text } from '@bigcommerce/big-design';
+import { Box, Button, Checkbox, Flex, Panel, Link as StyledLink, Table, TableSortDirection, Text } from '@bigcommerce/big-design';
 import { AddIcon, DeleteIcon, GetAppIcon } from '@bigcommerce/big-design-icons';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -62,10 +62,13 @@ const Coupons = () => {
         }
     };
 
-    const renderCode = (code: string) => <Text>{code}</Text>;
-    const renderAmount = (amount: number) => <Small>{amount}</Small>;
-    const renderType = (type: string) => <Text>{type}</Text>;
+    const renderName = (name: string) => <Text>{name}</Text>;
+    const renderRedemptionType = (type: string) => <Text>{type}</Text>;
+    const renderUses = (current: number, max: number | null) => (
+        <Text>{`${current} / ${max === null ? '∞' : max}`}</Text>
+    );
     const renderDate = (date: string) => <Text>{new Date(date).toLocaleDateString()}</Text>;
+    const renderStatus = (status: string) => <Text>{status}</Text>;
 
     if (isLoading) return <Loading />;
     if (error) return <ErrorMessage error={error} />;
@@ -102,15 +105,17 @@ const Coupons = () => {
                         render: ({ id }) => (
                             <Checkbox
                                 label=""
-                                checked={selectedCoupons.includes(id)}
-                                onChange={() => handleCheckboxChange(id)}
+                                checked={selectedCoupons.includes(id.toString())}
+                                onChange={() => handleCheckboxChange(id.toString())}
                             />
                         ),
                     },
-                    { header: 'Code', hash: 'code', render: ({ code }) => renderCode(code), isSortable: true },
-                    { header: 'Amount', hash: 'amount', render: ({ amount }) => renderAmount(amount), isSortable: true },
-                    { header: 'Type', hash: 'type', render: ({ type }) => renderType(type), isSortable: true },
-                    { header: 'Created Date', hash: 'date_created', render: ({ date_created }) => renderDate(date_created), isSortable: true },
+                    { header: 'Name', hash: 'name', render: ({ name }) => renderName(name), isSortable: true },
+                    { header: 'Type', hash: 'redemption_type', render: ({ redemption_type }) => renderRedemptionType(redemption_type), isSortable: true },
+                    { header: 'Uses', hash: 'uses', render: ({ current_uses, max_uses }) => renderUses(current_uses, max_uses), isSortable: true },
+                    { header: 'Start Date', hash: 'start_date', render: ({ start_date }) => renderDate(start_date), isSortable: true },
+                    { header: 'End Date', hash: 'end_date', render: ({ end_date }) => renderDate(end_date || 'No end date'), isSortable: true },
+                    { header: 'Status', hash: 'status', render: ({ status }) => renderStatus(status), isSortable: true },
                 ]}
                 items={tableItems}
                 itemName="Coupons"
