@@ -17,7 +17,6 @@ async function fetcher(url: string, query: string) {
     return res.json();
 }
 
-// Reusable SWR hooks
 // https://swr.vercel.app/
 export function useProducts() {
     const { context } = useSession();
